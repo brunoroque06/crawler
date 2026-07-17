@@ -5,9 +5,9 @@
 ## Run
 
 ```sh
-go run . -rss \
+go run . \
   -atom 'Go Blog=https://go.dev/blog/feed.atom' \
   -gnews 'Associated Press=apnews.com' \
-	-reddit 'Reddit Chess=chess' \
-	-rss 'Hacker News=https://news.ycombinator.com/rss'
+  -reddit 'Reddit Chess=chess' \
+  -rss 'Hacker News=https://news.ycombinator.com/rss'
 ```
