@@ -1,6 +1,6 @@
 # Crawl
 
-`crawl` fetches recent items from multiple feed sources and prints them to `stdout`. For example, it can we used with Apple Shortcuts to deliver a newsletter periodically.
+`crawl` fetches recent items from multiple sources and prints them to the `stdout`. It can be used, for example, with Apple Shortcuts to deliver a newsletter periodically.
 
 ## Run
 
