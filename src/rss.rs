@@ -14,7 +14,7 @@ impl Source for Rss {
     }
 
     fn parse(&self, body: &str) -> Result<Vec<SourceItem>, String> {
-        from_str::<RssFeed>(&body).map(|r| {
+        from_str::<RssFeed>(body).map(|r| {
             r.channel
                 .items
                 .into_iter()

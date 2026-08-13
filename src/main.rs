@@ -37,7 +37,7 @@ fn main() -> Result<(), String> {
 
     let args = parse_args(&flags)?;
 
-    let feeds = dispatch(sources, args);
+    let feeds = dispatch(&sources, args);
 
     deliver(feeds);
 

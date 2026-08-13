@@ -11,7 +11,7 @@ pub struct Feed {
     items: Result<Vec<SourceItem>, String>,
 }
 
-pub fn dispatch(srcs: Sources, args: Vec<Arg>) -> Vec<Feed> {
+pub fn dispatch(srcs: &Sources, args: Vec<Arg>) -> Vec<Feed> {
     let urls = args.into_iter().filter_map(|a| match a {
         Arg::Uint { .. } => None,
         Arg::Url { key, title, url } => Some((key, title, url)),
@@ -28,10 +28,7 @@ pub fn dispatch(srcs: Sources, args: Vec<Arg>) -> Vec<Feed> {
                 src.parse(&body)
             })();
 
-            Feed {
-                title,
-                items: items,
-            }
+            Feed { title, items }
         })
         .collect()
 }
