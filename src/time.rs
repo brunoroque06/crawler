@@ -1,7 +1,10 @@
+use std::time::SystemTime;
+
 use chrono::{DateTime, Duration, Utc};
 
 pub fn now(back: i64) -> DateTime<Utc> {
-    Utc::now() - Duration::hours(back)
+    let now: DateTime<Utc> = SystemTime::now().into();
+    now - Duration::hours(back)
 }
 
 pub fn parse(val: &str) -> Result<DateTime<Utc>, String> {
