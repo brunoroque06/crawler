@@ -1,11 +1,13 @@
 .PHONY: *
 
 build:
-	go build
+	cargo build
 
 fmt:
-	go fmt .
+	cargo fmt
 
 fmt-check:
-	@test -z "$$(gofmt -l .)" || (gofmt -l . && exit 1)
+	cargo fmt --check
 
+test:
+	cargo test

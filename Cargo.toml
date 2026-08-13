@@ -1,0 +1,10 @@
+[package]
+name = "feed"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4.45"
+quick-xml = { version = "0.41.0", features = ["escape-html", "serialize"] }
+reqwest = { version = "0.13.4", features = ["blocking", "rustls"] }
+serde = { version = "1.0.229", features = ["derive"] }
