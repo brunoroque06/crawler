@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::{
     args::Spec,
     http::get,
@@ -32,7 +34,25 @@ pub fn dispatch(specs: Vec<Specs>) -> Vec<Feed> {
         .collect()
 }
 
-pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8) {
+#[derive(Debug)]
+pub enum Output {
+    Plain,
+    Tty,
+}
+
+impl FromStr for Output {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "plain" => Ok(Output::Plain),
+            "tty" => Ok(Output::Tty),
+            _ => Err(format!("expected plain or tty, got {s}")),
+        }
+    }
+}
+
+pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
     let now = now(i64::from(cutoff));
     for f in feeds {
         println!("{}", f.title);
@@ -46,10 +66,13 @@ pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8) {
                     .filter(|i| i.pub_date.0 > now)
                     .take(usize::from(last))
                 {
-                    println!(
-                        "\t\x1b]8;;{}\x1b\\{} {}\x1b]8;;\x1b\\",
-                        i.url, i.pub_date, i.title
-                    );
+                    match output {
+                        Output::Plain => println!("\t{} {} {}", i.pub_date, i.title, i.url),
+                        Output::Tty => println!(
+                            "\t\x1b]8;;{}\x1b\\{} {}\x1b]8;;\x1b\\",
+                            i.url, i.pub_date, i.title
+                        ),
+                    }
                     // println!("- [{} {}]({})\n", i.pub_date, i.title, i.url);
                 }
             }

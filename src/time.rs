@@ -1,6 +1,5 @@
-use std::{fmt::Display, time::SystemTime};
-
 use chrono::{DateTime, Duration, Utc};
+use std::{fmt::Display, time::SystemTime};
 
 pub fn now(back: i64) -> DateTime<Utc> {
     let now: DateTime<Utc> = SystemTime::now().into();

@@ -28,7 +28,7 @@ fn main() -> Result<(), String> {
 
     let feeds = dispatch(specs);
 
-    deliver(feeds, args.cutoff, args.last);
+    deliver(feeds, args.cutoff, args.last, args.output);
 
     Ok(())
 }

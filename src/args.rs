@@ -1,6 +1,8 @@
 use argh::FromArgs;
 use std::str::FromStr;
 
+use crate::mux::Output;
+
 #[derive(Debug, PartialEq)]
 pub struct Spec {
     pub title: String,
@@ -30,6 +32,10 @@ fn default_last() -> u8 {
     8
 }
 
+fn default_output() -> Output {
+    Output::Tty
+}
+
 /// feed
 #[derive(Debug, FromArgs)]
 pub struct Args {
@@ -56,6 +62,10 @@ pub struct Args {
     /// last items
     #[argh(option, default = "default_last()")]
     pub last: u8,
+
+    /// output format
+    #[argh(option, default = "default_output()")]
+    pub output: Output,
 }
 
 pub fn parse_args() -> Args {
