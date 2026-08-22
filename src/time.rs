@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, Utc};
 use std::{fmt::Display, time::SystemTime};
 
-pub fn now(back: i64) -> DateTime<Utc> {
+pub fn hours_ago(back: i64) -> DateTime<Utc> {
     let now: DateTime<Utc> = SystemTime::now().into();
     now - Duration::hours(back)
 }

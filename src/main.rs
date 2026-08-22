@@ -16,7 +16,7 @@ use crate::mux::{Specs, deliver, dispatch};
 use crate::reddit::Reddit;
 use crate::rss::Rss;
 
-fn main() -> Result<(), String> {
+fn main() {
     let args = parse_args();
 
     let specs = vec![
@@ -29,6 +29,4 @@ fn main() -> Result<(), String> {
     let feeds = dispatch(specs);
 
     deliver(feeds, args.cutoff, args.last, args.output);
-
-    Ok(())
 }

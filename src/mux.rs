@@ -1,11 +1,32 @@
 use std::str::FromStr;
 
 use crate::{
-    args::Spec,
     http::get,
     source::{Item, Source},
-    time::now,
+    time::hours_ago,
 };
+
+#[derive(Debug, PartialEq)]
+pub struct Spec {
+    pub title: String,
+    pub url: String,
+}
+
+impl FromStr for Spec {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (title, url) = s
+            .split_once('=')
+            .filter(|(t, u)| !t.trim().is_empty() && !u.trim().is_empty())
+            .ok_or_else(|| format!("expected title=url, but got {s}"))?;
+
+        Ok(Self {
+            title: title.into(),
+            url: url.into(),
+        })
+    }
+}
 
 pub struct Specs<'a>(pub Vec<Spec>, pub &'a dyn Source);
 
@@ -53,7 +74,7 @@ impl FromStr for Output {
 }
 
 pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
-    let now = now(i64::from(cutoff));
+    let cutoff = hours_ago(i64::from(cutoff));
     for f in feeds {
         println!("{}", f.title);
         match &f.items {
@@ -63,7 +84,7 @@ pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
             Ok(items) => {
                 for i in items
                     .iter()
-                    .filter(|i| i.pub_date.0 > now)
+                    .filter(|i| i.pub_date.0 > cutoff)
                     .take(usize::from(last))
                 {
                     match output {
@@ -78,5 +99,38 @@ pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
             }
         }
         println!();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn spec_err(val: &str) -> Result<Spec, String> {
+        Err(format!("expected title=url, but got {}", val))
+    }
+
+    #[test]
+    fn spec_needs_eq() {
+        assert_eq!(Spec::from_str("no_eq"), spec_err("no_eq"));
+    }
+
+    #[test]
+    fn spec_no_empty() {
+        assert_eq!(Spec::from_str("title="), spec_err("title="));
+        assert_eq!(Spec::from_str("title= "), spec_err("title= "));
+        assert_eq!(Spec::from_str("=url"), spec_err("=url"));
+        assert_eq!(Spec::from_str(" =url"), spec_err(" =url"));
+    }
+
+    #[test]
+    fn spec() {
+        assert_eq!(
+            Spec::from_str("title=url"),
+            Ok(Spec {
+                title: "title".to_string(),
+                url: "url".to_string()
+            })
+        );
     }
 }
