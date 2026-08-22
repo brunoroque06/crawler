@@ -9,37 +9,26 @@ mod source;
 mod time;
 mod xml;
 
-use crate::args::{ArgDef, ArgType, parse_args};
+use crate::args::parse_args;
 use crate::atom::Atom;
 use crate::gnews::Gnews;
-use crate::mux::{deliver, dispatch};
+use crate::mux::{Specs, deliver, dispatch};
 use crate::reddit::Reddit;
 use crate::rss::Rss;
-use crate::source::Sources;
 
 fn main() -> Result<(), String> {
-    let sources = Sources::new().add(Atom).add(Gnews).add(Reddit).add(Rss);
+    let args = parse_args();
 
-    let flags = sources
-        .args()
-        .into_iter()
-        .chain([
-            ArgDef {
-                key: "cutoff".to_string(),
-                typ: ArgType::Uint,
-            },
-            ArgDef {
-                key: "last".to_string(),
-                typ: ArgType::Uint,
-            },
-        ])
-        .collect::<Vec<_>>();
+    let specs = vec![
+        Specs(args.atom, &Atom),
+        Specs(args.gnews, &Gnews),
+        Specs(args.reddit, &Reddit),
+        Specs(args.rss, &Rss),
+    ];
 
-    let args = parse_args(&flags)?;
+    let feeds = dispatch(specs);
 
-    let feeds = dispatch(&sources, args);
-
-    deliver(feeds);
+    deliver(feeds, args.cutoff, args.last);
 
     Ok(())
 }

@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
-    source::{Source, SourceItem},
+    source::{Item, Source},
     time::DateTimeUtc,
     xml::from_str,
 };
@@ -9,15 +9,11 @@ use crate::{
 pub struct Atom;
 
 impl Source for Atom {
-    fn key(&self) -> String {
-        "atom".to_string()
-    }
-
-    fn parse(&self, body: &str) -> Result<Vec<SourceItem>, String> {
+    fn parse(&self, body: &str) -> Result<Vec<Item>, String> {
         from_str::<AtomFeed>(body).map(|r| {
             r.entries
                 .into_iter()
-                .map(|i| SourceItem {
+                .map(|i| Item {
                     title: i.title,
                     url: i.link.href,
                     pub_date: i.updated,

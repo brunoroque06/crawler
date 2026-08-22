@@ -3,11 +3,7 @@ use crate::{atom::Atom, source::Source};
 pub struct Reddit;
 
 impl Source for Reddit {
-    fn key(&self) -> String {
-        "reddit".to_string()
-    }
-
-    fn parse(&self, body: &str) -> Result<Vec<crate::source::SourceItem>, String> {
+    fn parse(&self, body: &str) -> Result<Vec<crate::source::Item>, String> {
         Atom.parse(body)
     }
 

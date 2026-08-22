@@ -1,4 +1,4 @@
-use std::time::SystemTime;
+use std::{fmt::Display, time::SystemTime};
 
 use chrono::{DateTime, Duration, Utc};
 
@@ -16,6 +16,12 @@ pub fn parse(val: &str) -> Result<DateTime<Utc>, String> {
 
 #[derive(Debug)]
 pub struct DateTimeUtc(pub DateTime<Utc>);
+
+impl Display for DateTimeUtc {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 #[cfg(test)]
 mod tests {

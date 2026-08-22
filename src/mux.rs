@@ -1,40 +1,39 @@
 use crate::{
-    args::Arg,
+    args::Spec,
     http::get,
-    source::{SourceItem, Sources},
+    source::{Item, Source},
     time::now,
 };
+
+pub struct Specs<'a>(pub Vec<Spec>, pub &'a dyn Source);
 
 #[derive(Debug)]
 pub struct Feed {
     title: String,
-    items: Result<Vec<SourceItem>, String>,
+    items: Result<Vec<Item>, String>,
 }
 
-pub fn dispatch(srcs: &Sources, args: Vec<Arg>) -> Vec<Feed> {
-    let urls = args.into_iter().filter_map(|a| match a {
-        Arg::Uint { .. } => None,
-        Arg::Url { key, title, url } => Some((key, title, url)),
-    });
-
-    urls.into_iter()
-        .map(|(key, title, url)| {
-            let items = (|| {
-                let src = srcs
-                    .get(&key)
-                    .ok_or_else(|| format!("unknown source {key}"))?;
-                let url = src.url(&url)?;
-                let body = get(&url)?;
-                src.parse(&body)
-            })();
-
-            Feed { title, items }
+pub fn dispatch(specs: Vec<Specs>) -> Vec<Feed> {
+    specs
+        .into_iter()
+        .flat_map(|Specs(specs, src)| {
+            specs.into_iter().map(|s| {
+                let items = (|| {
+                    let url = src.url(&s.url)?;
+                    let body = get(&url)?;
+                    src.parse(&body)
+                })();
+                Feed {
+                    title: s.title,
+                    items,
+                }
+            })
         })
         .collect()
 }
 
-pub fn deliver(feeds: Vec<Feed>) {
-    let now = now(25);
+pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8) {
+    let now = now(i64::from(cutoff));
     for f in feeds {
         println!("{}", f.title);
         match &f.items {
@@ -42,8 +41,16 @@ pub fn deliver(feeds: Vec<Feed>) {
                 eprintln!("\t{}", e)
             }
             Ok(items) => {
-                for i in items.iter().filter(|i| i.pub_date.0 > now).take(8) {
-                    println!("\t{} - {}", i.title, i.url)
+                for i in items
+                    .iter()
+                    .filter(|i| i.pub_date.0 > now)
+                    .take(usize::from(last))
+                {
+                    println!(
+                        "\t\x1b]8;;{}\x1b\\{} {}\x1b]8;;\x1b\\",
+                        i.url, i.pub_date, i.title
+                    );
+                    // println!("- [{} {}]({})\n", i.pub_date, i.title, i.url);
                 }
             }
         }
