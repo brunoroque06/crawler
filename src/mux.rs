@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::{
-    http::get,
+    http::Client,
     source::{Item, Source},
     time::hours_ago,
 };
@@ -36,14 +36,15 @@ pub struct Feed {
     items: Result<Vec<Item>, String>,
 }
 
-pub fn dispatch(specs: Vec<Specs>) -> Vec<Feed> {
-    specs
+pub fn dispatch(specs: Vec<Specs>) -> Result<Vec<Feed>, String> {
+    let client = Client::new()?;
+    Ok(specs
         .into_iter()
         .flat_map(|Specs(specs, src)| {
             specs.into_iter().map(|s| {
                 let items = (|| {
                     let url = src.url(&s.url)?;
-                    let body = get(&url)?;
+                    let body = client.get(&url)?;
                     src.parse(&body)
                 })();
                 Feed {
@@ -52,7 +53,7 @@ pub fn dispatch(specs: Vec<Specs>) -> Vec<Feed> {
                 }
             })
         })
-        .collect()
+        .collect())
 }
 
 #[derive(Debug)]
