@@ -6,7 +6,7 @@ impl Source for Gnews {
     fn url(&self, url: &str) -> Result<String, String> {
         build_url(
             "https://news.google.com/rss/search",
-            vec![("hl", "en-US"), ("gl", "US"), ("ceid", "US:en"), ("q", url)],
+            &[("hl", "en-US"), ("gl", "US"), ("ceid", "US:en"), ("q", url)],
         )
     }
 

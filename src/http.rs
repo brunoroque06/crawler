@@ -24,13 +24,11 @@ impl Client {
     }
 }
 
-pub fn build_url(url: &str, params: Vec<(&str, &str)>) -> Result<String, String> {
+pub fn build_url(url: &str, params: &[(&str, &str)]) -> Result<String, String> {
     let mut url = reqwest::Url::parse(url).map_err(|e| e.to_string())?;
 
     if !params.is_empty() {
-        for (k, v) in params {
-            url.query_pairs_mut().append_pair(k, v);
-        }
+        url.query_pairs_mut().extend_pairs(params);
     }
 
     Ok(url.to_string())
@@ -43,7 +41,7 @@ mod tests {
     #[test]
     fn invalid_url() {
         assert_eq!(
-            build_url("invalid-url", vec![]),
+            build_url("invalid-url", &[]),
             Err("relative URL without a base".to_string())
         );
     }
@@ -52,13 +50,13 @@ mod tests {
 
     #[test]
     fn valid_url() {
-        assert_eq!(build_url(URL, vec![]), Ok(URL.to_string()));
+        assert_eq!(build_url(URL, &[]), Ok(URL.to_string()));
     }
 
     #[test]
     fn valid_url_params() {
         assert_eq!(
-            build_url(URL, vec![("hl", "en-US"), ("q", "two words")]),
+            build_url(URL, &[("hl", "en-US"), ("q", "two words")]),
             Ok("https://brunoroque06.github.io/?hl=en-US&q=two+words".to_string())
         );
     }
