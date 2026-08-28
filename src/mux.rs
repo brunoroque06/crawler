@@ -95,7 +95,6 @@ pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
                             i.url, i.pub_date, i.title
                         ),
                     }
-                    // println!("- [{} {}]({})\n", i.pub_date, i.title, i.url);
                 }
             }
         }
