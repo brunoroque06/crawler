@@ -74,7 +74,7 @@ impl FromStr for Output {
     }
 }
 
-pub fn deliver(feeds: Vec<Feed>, cutoff: u8, last: u8, output: Output) {
+pub fn deliver(feeds: &[Feed], cutoff: u8, last: u8, output: Output) {
     let cutoff = hours_ago(i64::from(cutoff));
     for f in feeds {
         println!("{}", f.title);

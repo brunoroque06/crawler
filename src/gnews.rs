@@ -1,4 +1,8 @@
-use crate::{http::build_url, rss::Rss, source::Source};
+use crate::{
+    http::build_url,
+    rss::Rss,
+    source::{Item, Source},
+};
 
 pub struct Gnews;
 
@@ -10,7 +14,7 @@ impl Source for Gnews {
         )
     }
 
-    fn parse(&self, body: &str) -> Result<Vec<crate::source::Item>, String> {
+    fn parse(&self, body: &str) -> Result<Vec<Item>, String> {
         Rss.parse(body)
     }
 }

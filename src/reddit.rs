@@ -1,9 +1,12 @@
-use crate::{atom::Atom, source::Source};
+use crate::{
+    atom::Atom,
+    source::{Item, Source},
+};
 
 pub struct Reddit;
 
 impl Source for Reddit {
-    fn parse(&self, body: &str) -> Result<Vec<crate::source::Item>, String> {
+    fn parse(&self, body: &str) -> Result<Vec<Item>, String> {
         Atom.parse(body)
     }
 
