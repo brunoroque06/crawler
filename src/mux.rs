@@ -8,8 +8,8 @@ use crate::{
 
 #[derive(Debug, PartialEq)]
 pub struct Spec {
-    pub title: String,
-    pub url: String,
+    title: String,
+    url: String,
 }
 
 impl FromStr for Spec {
@@ -85,7 +85,7 @@ pub fn deliver(feeds: &[Feed], cutoff: u8, last: u8, output: Output) {
             Ok(items) => {
                 for i in items
                     .iter()
-                    .filter(|i| i.pub_date.0 > cutoff)
+                    .filter(|i| i.pub_date > cutoff)
                     .take(usize::from(last))
                 {
                     match output {

@@ -1,25 +1,25 @@
 use chrono::{DateTime, Duration, Utc};
 use std::{fmt::Display, time::SystemTime};
 
-pub fn hours_ago(back: i64) -> DateTime<Utc> {
-    let now: DateTime<Utc> = SystemTime::now().into();
-    now - Duration::hours(back)
-}
-
-pub fn parse(val: &str) -> Result<DateTime<Utc>, String> {
-    DateTime::parse_from_rfc2822(val)
-        .or_else(|_| DateTime::parse_from_rfc3339(val))
-        .map_err(|e| e.to_string())
-        .map(|d| d.with_timezone(&Utc))
-}
-
-#[derive(Debug)]
-pub struct DateTimeUtc(pub DateTime<Utc>);
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub struct DateTimeUtc(DateTime<Utc>);
 
 impl Display for DateTimeUtc {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0.format("%Y-%m-%d %H:%M"))
     }
+}
+
+pub fn hours_ago(back: i64) -> DateTimeUtc {
+    let now: DateTime<Utc> = SystemTime::now().into();
+    DateTimeUtc(now - Duration::hours(back))
+}
+
+pub fn parse(val: &str) -> Result<DateTimeUtc, String> {
+    DateTime::parse_from_rfc2822(val)
+        .or_else(|_| DateTime::parse_from_rfc3339(val))
+        .map_err(|e| e.to_string())
+        .map(|d| DateTimeUtc(d.with_timezone(&Utc)))
 }
 
 #[cfg(test)]

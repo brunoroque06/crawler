@@ -15,8 +15,6 @@ impl<'de> Deserialize<'de> for DateTimeUtc {
         D: Deserializer<'de>,
     {
         let val = String::deserialize(des)?;
-        parse(&val)
-            .map_err(|_| de::Error::custom(format!("invalid date: {val}")))
-            .map(Self)
+        parse(&val).map_err(|_| de::Error::custom(format!("invalid date: {val}")))
     }
 }
