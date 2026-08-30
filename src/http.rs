@@ -3,13 +3,13 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new() -> Result<Client, String> {
+    pub fn new() -> Result<Self, String> {
         let client = reqwest::blocking::Client::builder()
             .user_agent("feed/0.1")
             .build()
             .map_err(|e| e.to_string())?;
 
-        Ok(Client { client })
+        Ok(Self { client })
     }
 
     pub fn get(&self, url: &str) -> Result<String, String> {
