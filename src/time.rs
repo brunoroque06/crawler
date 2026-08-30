@@ -11,16 +11,16 @@ impl Display for DateTimeUtc {
 }
 
 impl DateTimeUtc {
-    pub fn hours_ago(back: i64) -> DateTimeUtc {
+    pub fn hours_ago(back: i64) -> Self {
         let now: DateTime<Utc> = SystemTime::now().into();
-        DateTimeUtc(now - Duration::hours(back))
+        Self(now - Duration::hours(back))
     }
 
-    pub fn parse(val: &str) -> Result<DateTimeUtc, String> {
+    pub fn parse(val: &str) -> Result<Self, String> {
         DateTime::parse_from_rfc2822(val)
             .or_else(|_| DateTime::parse_from_rfc3339(val))
             .map_err(|e| e.to_string())
-            .map(|d| DateTimeUtc(d.with_timezone(&Utc)))
+            .map(|d| Self(d.with_timezone(&Utc)))
     }
 }
 
