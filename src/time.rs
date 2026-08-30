@@ -10,16 +10,18 @@ impl Display for DateTimeUtc {
     }
 }
 
-pub fn hours_ago(back: i64) -> DateTimeUtc {
-    let now: DateTime<Utc> = SystemTime::now().into();
-    DateTimeUtc(now - Duration::hours(back))
-}
+impl DateTimeUtc {
+    pub fn hours_ago(back: i64) -> DateTimeUtc {
+        let now: DateTime<Utc> = SystemTime::now().into();
+        DateTimeUtc(now - Duration::hours(back))
+    }
 
-pub fn parse(val: &str) -> Result<DateTimeUtc, String> {
-    DateTime::parse_from_rfc2822(val)
-        .or_else(|_| DateTime::parse_from_rfc3339(val))
-        .map_err(|e| e.to_string())
-        .map(|d| DateTimeUtc(d.with_timezone(&Utc)))
+    pub fn parse(val: &str) -> Result<DateTimeUtc, String> {
+        DateTime::parse_from_rfc2822(val)
+            .or_else(|_| DateTime::parse_from_rfc3339(val))
+            .map_err(|e| e.to_string())
+            .map(|d| DateTimeUtc(d.with_timezone(&Utc)))
+    }
 }
 
 #[cfg(test)]
@@ -28,7 +30,7 @@ mod tests {
 
     #[test]
     fn invalid_date() {
-        assert!(parse("not-a-date").is_err());
+        assert!(DateTimeUtc::parse("not-a-date").is_err());
     }
 
     #[test]
@@ -42,7 +44,7 @@ mod tests {
         ];
 
         for value in dates {
-            assert!(parse(value).is_ok());
+            assert!(DateTimeUtc::parse(value).is_ok());
         }
     }
 }

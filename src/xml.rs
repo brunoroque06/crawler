@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, de};
 
-use crate::time::{DateTimeUtc, parse};
+use crate::time::DateTimeUtc;
 
 pub fn from_str<'de, T>(s: &'de str) -> Result<T, String>
 where
@@ -15,6 +15,6 @@ impl<'de> Deserialize<'de> for DateTimeUtc {
         D: Deserializer<'de>,
     {
         let val = String::deserialize(des)?;
-        parse(&val).map_err(|_| de::Error::custom(format!("invalid date: {val}")))
+        DateTimeUtc::parse(&val).map_err(|_| de::Error::custom(format!("invalid date: {val}")))
     }
 }
