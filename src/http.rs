@@ -42,7 +42,7 @@ mod tests {
     fn invalid_url() {
         assert_eq!(
             build_url("invalid-url", &[]),
-            Err("relative URL without a base".to_string())
+            Err("relative URL without a base".to_owned())
         );
     }
 
@@ -50,14 +50,14 @@ mod tests {
 
     #[test]
     fn valid_url() {
-        assert_eq!(build_url(URL, &[]), Ok(URL.to_string()));
+        assert_eq!(build_url(URL, &[]), Ok(URL.to_owned()));
     }
 
     #[test]
     fn valid_url_params() {
         assert_eq!(
             build_url(URL, &[("hl", "en-US"), ("q", "two words")]),
-            Ok("https://brunoroque06.github.io/?hl=en-US&q=two+words".to_string())
+            Ok("https://brunoroque06.github.io/?hl=en-US&q=two+words".to_owned())
         );
     }
 }

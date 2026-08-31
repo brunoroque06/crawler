@@ -4,7 +4,7 @@ pub trait Source {
     fn parse(&self, body: &str) -> Result<Vec<Item>, String>;
 
     fn url(&self, url: &str) -> Result<String, String> {
-        Ok(url.to_string())
+        Ok(url.to_owned())
     }
 }
 

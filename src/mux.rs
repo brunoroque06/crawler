@@ -128,8 +128,8 @@ mod tests {
         assert_eq!(
             Spec::from_str("title=url"),
             Ok(Spec {
-                title: "title".to_string(),
-                url: "url".to_string()
+                title: "title".to_owned(),
+                url: "url".to_owned()
             })
         );
     }
