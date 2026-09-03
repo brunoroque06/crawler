@@ -12,7 +12,7 @@ mod xml;
 use crate::args::parse_args;
 use crate::atom::Atom;
 use crate::gnews::Gnews;
-use crate::mux::{Specs, deliver, dispatch};
+use crate::mux::{Specs, compose, dispatch};
 use crate::reddit::Reddit;
 use crate::rss::Rss;
 
@@ -27,8 +27,8 @@ fn main() -> Result<(), String> {
     ];
 
     let feeds = dispatch(specs)?;
-
-    deliver(&feeds, args.cutoff, args.last, args.output);
+    let body = compose(&feeds, args.cutoff, args.last, args.output).map_err(|e| e.to_string())?;
+    print!("{}", body);
 
     Ok(())
 }

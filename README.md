@@ -6,7 +6,7 @@
 
 ```sh
 cargo run -- \
-  --atom 'Go Blog=https://go.dev/blog/feed.atom' \
+  --atom 'Rust Blog=https://blog.rust-lang.org/feed.xml' \
   --gnews 'Associated Press=apnews.com' \
   --reddit 'Reddit Chess=chess' \
   --rss 'Hacker News=https://news.ycombinator.com/rss'

@@ -1,4 +1,7 @@
-use std::str::FromStr;
+use std::{
+    fmt::{Error, Write},
+    str::FromStr,
+};
 
 use crate::{
     http::Client,
@@ -74,32 +77,36 @@ impl FromStr for Output {
     }
 }
 
-pub fn deliver(feeds: &[Feed], cutoff: u8, last: u8, output: Output) {
+pub fn compose(feeds: &[Feed], cutoff: u8, last: u8, output: Output) -> Result<String, Error> {
     let cutoff = DateTimeUtc::hours_ago(i64::from(cutoff));
+    let mut out = String::new();
+
     for f in feeds {
-        println!("{}", f.title);
-        match &f.items {
+        writeln!(out, "{}", f.title)?;
+        let items = match &f.items {
+            Ok(items) => items,
             Err(e) => {
-                eprintln!("\t{}", e)
+                writeln!(out, "\t{}\n", e)?;
+                continue;
             }
-            Ok(items) => {
-                for i in items
-                    .iter()
-                    .filter(|i| i.pub_date > cutoff)
-                    .take(usize::from(last))
-                {
-                    match output {
-                        Output::Plain => println!("\t{} {} {}", i.pub_date, i.title, i.url),
-                        Output::Tty => println!(
-                            "\t\x1b]8;;{}\x1b\\{} {}\x1b]8;;\x1b\\",
-                            i.url, i.pub_date, i.title
-                        ),
-                    }
-                }
+        };
+        for i in items
+            .iter()
+            .filter(|i| i.pub_date > cutoff)
+            .take(usize::from(last))
+        {
+            match output {
+                Output::Plain => writeln!(out, "\t{} {} {}", i.pub_date, i.title, i.url)?,
+                Output::Tty => writeln!(
+                    out,
+                    "\t\x1b]8;;{}\x1b\\{} {}\x1b]8;;\x1b\\",
+                    i.url, i.pub_date, i.title
+                )?,
             }
         }
-        println!();
+        writeln!(out)?;
     }
+    Ok(out)
 }
 
 #[cfg(test)]
